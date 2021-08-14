@@ -1,77 +1,86 @@
 <template>
-  <div class="home">
+    <div class="home">
     <div class="wrapper fadeInDown">
       <div id="formContent">
-        <!-- Tabs Titles -->
-
-        <!-- Icon -->
         <div class="fadeIn first">
-          <img src="@/assets/149071.png" id="icon" alt="User Icon" />
+            <br>
+          <h3>REGISTRO</h3>
         </div>
-
-        <!-- Login Form -->
-        <form v-on:submit.prevent="login">
-          <input type="text" id="login" class="fadeIn second" name="login" placeholder="Correo" v-model="correo">
-          <input type="password" id="password" class="fadeIn third" name="login" placeholder="Contraseña" v-model="contrasena">
-          <input type="submit" class="fadeIn fourth" value="Entrar">
+        <form v-on:submit.prevent="SetUser">
+            <input type="text" id="login" class="fadeIn second" name="login" placeholder="Nombre" v-model="nombre" required>
+            <input type="text" id="login" class="fadeIn second" name="login" placeholder="Apellido" v-model="apellido" required>
+            <select class="form-control second fadeIn" id="exampleFormControlSelect1" v-model="idCompania">
+                <option v-for="org in ListaOrganizaciones" :key="org.idCompania" :value=org.idCompania>{{ org.nombre }} (NIT: {{ org.nit }})</option>
+            </select>
+            <input type="text" id="login" class="fadeIn second" name="login" placeholder="Correo" v-model="correo" required>
+            <input type="password" id="password" class="fadeIn third" name="login" placeholder="Contraseña" v-model="contrasena" required>
+            <input type="submit" class="fadeIn fourth" value="Entrar">
         </form>
-
-        <!-- Remind Passowrd -->
-        <div id="formFooter">
-          <a v-on:click="toRegister()" class="underlineHover" href="">Registrarse</a>
+        <div class="alert alert-success" role="alert" v-if="isRegister">
+          Registrado
         </div>
-        <div class="alert alert-danger" role="alert" v-if="error">
-          {{ errorMsg }}
-        </div>
-
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
 import axios from 'axios';
 
 export default {
-  name: 'Home',
-  components: {
-    
-  },
-  data() {
-    return {
-      correo: "",
-      contrasena: "",
-      error: false,
-      errorMsg: ""
-    }
-  },
-  methods: {
-    login(){
-      let json = {
-        "correo": this.correo,
-        "contrasena": this.contrasena
-      };
-
-      axios.post('https://backend-apptest.herokuapp.com/login', json)
-      .then(data => {
-        if(data.data.id != undefined && data.data.token != undefined) {
-          sessionStorage.token = data.data.token;
-          sessionStorage.id = data.data.id;
-
-          this.$router.push('organizations');
-        } else {
-          this.error = true;
-          this.errorMsg = "Revise las credenciales."
-        }
-      });
+    name: 'register',
+    components: {
+        
     },
-    toRegister() {
-      this.$router.push('register');
+    data() {
+        return {
+            estado: 1,
+            ListaOrganizaciones: [],
+            dataUsuario: [],
+            nombre: "",
+            apellido: "",
+            idCompania: 0,
+            correo: "",
+            contrasena: "",
+            isRegister: false
+        }
+    },
+    mounted() {
+        this.GetOrganizaciones();
+    },
+    methods: {
+        GetOrganizaciones(){
+            axios.get('https://backend-apptest.herokuapp.com/com')
+            .then(data => {
+                this.ListaOrganizaciones = data.data;
+                console.log(this.ListaOrganizaciones);
+            });
+        },
+        SetUser() {
+            axios.post('https://backend-apptest.herokuapp.com/user', 
+            this.dataUsuario = {
+                nombre: this.nombre,
+                apellido: this.apellido,
+                idCompania: this.idCompania,
+                correo: this.correo,
+                contrasena: this.contrasena
+            })
+            .then(data => {
+                console.log(data);
+                this.dataUsuario = [];
+                this.nombre = '';
+                this.apellido = '';
+                this.idCompania = 0;
+                this.correo = '';
+                this.contrasena = '';
+                this.isRegister = true;
+                this.GetOrganizaciones();
+            });
+        }
     }
-  },
 }
 </script>
+
 
 <style scoped>
 
@@ -179,7 +188,7 @@ input[type=button]:active, input[type=submit]:active, input[type=reset]:active  
   transform: scale(0.95);
 }
 
-input[type=text] {
+input[type=text], select {
   background-color: #f6f6f6;
   border: none;
   color: #0d0d0d;
@@ -200,12 +209,12 @@ input[type=text] {
   border-radius: 5px 5px 5px 5px;
 }
 
-input[type=text]:focus {
+input[type=text]:focus select {
   background-color: #fff;
   border-bottom: 2px solid #5fbae9;
 }
 
-input[type=text]:placeholder {
+input[type=text]:placeholder select {
   color: #cccccc;
 }
 
