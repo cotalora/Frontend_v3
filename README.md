@@ -16,7 +16,7 @@ Aplicación de prueba para la gestión de proyectos de desarrollo de software el
 ![image](https://user-images.githubusercontent.com/67478427/133283917-0a23db40-3e79-4edf-aa78-c3505377ac59.png)
 
 ### URL
-[https://frontend-apptest.herokuapp.com/](url)
+https://frontend-apptest.herokuapp.com/
 
 
 
