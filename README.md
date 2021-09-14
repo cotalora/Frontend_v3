@@ -1,4 +1,4 @@
-# Frontend App Vue
+# Frontend - Aplicación gestión de proyectos de desarrollo de software
 
 ## Descripción
 Aplicación de prueba para la gestión de proyectos de desarrollo de software elaborada en 4 horas, utilizando manejo de sesiones.
